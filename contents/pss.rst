@@ -81,3 +81,14 @@ Protocols
 ^^^^^^^^^
 
 A framework is also in place for making ``devp2p`` protocols available using ``pss`` connections. This feature is only available using lower-level integration, and documentation is out of scope of this document.
+
+Example client flow
+-------------------
+
+This example presents a sequence of API calls made by a client to have two users interact with each other.
+
+1. First, both peers need to know each other public key, and a common ``Topic`` over which they will communicate. The client needs to call ``pss_getPublicKey`` to retrieve a node's public key, and can use ``pss_stringToTopic`` to create a ``Topic`` from an UTF-8 string.
+2. Once both public keys and the topic are known, the client must call ``pss_setPeerPublicKey`` providing the other peer's public key, the ``Topic`` and overlay ``Address`` to use for routing in order to retrieve a key identifier later used to send messages.
+3. In order to be notified when messages are received, the client must first create a subscription by calling ``pss_subscribe`` with the ``receive`` string and the ``Topic`` as arguments, in order to retrieve a subscription identifier.
+4. Provided the subscription identifier, the client can listen to notifications emitted with the ``pss_subscription`` method, and check if the ``subscription`` provided in the notification ``params`` matches the relevant identifier.
+5. Now ready to receive messages, the client can send messages to the other peer by calling the ``pss_sendAsym`` method with the peer's key identifier, ``Topic`` and hex-encoded message payload.
